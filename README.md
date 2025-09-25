@@ -273,7 +273,11 @@ This is a personal farm documentation system, but the build pipeline is designed
 
 ## 📝 License
 
-MIT License - use this approach for your own documentation systems!
+**The Unlicense** - This project is dedicated to the public domain for the benefit of all.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software for any purpose. See [LICENSE](./LICENSE) for full details.
+
+**Third-Party Dependencies**: This project respects and acknowledges all open-source libraries and tools used. See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) for complete attribution.
 
 ---
 
