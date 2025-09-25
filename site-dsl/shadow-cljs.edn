@@ -1,0 +1,43 @@
+{:source-paths ["src"]
+ :dependencies [[reagent "1.2.0"]
+                [hiccup "1.0.5"]
+                [cljs-ajax "0.8.4"]
+                [clojure/core.async "1.6.673"]]
+ 
+ :dev-http {8280 {:root "resources/public"}}
+ 
+ :builds
+ {:node-script
+  {:target :node-script
+   :main site.core/main
+   :output-to "target/main.js"
+   :optimizations :simple}
+  
+  :parser
+  {:target :node-script
+   :main site.parser/main
+   :output-to "target/parser.js"
+   :optimizations :simple}
+   
+  :generator  
+  {:target :node-script
+   :main site.generator/main
+   :output-to "target/generator.js"
+   :optimizations :simple}
+   
+  :test
+  {:target :node-test
+   :output-to "target/test.js"
+   :autorun true
+   :ns-regexp ".*-test$"}}
+   
+ ;; Development configuration
+ :dev-tools
+ {:watch-dirs ["src"]
+  :watch-ignore ["target" "node_modules"]
+  :reload-strategy :full}
+  
+ ;; Build optimization
+ :compiler-options
+ {:infer-externs :auto
+  :output-feature-set :es2020}}

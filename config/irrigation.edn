@@ -1,0 +1,84 @@
+;; Water system configuration for sustainable on-site irrigation
+{:water-sources
+ {:springs [{:name "Upper Spring"
+             :baseline-gpm 12
+             :dry-season-gpm 6
+             :elevation-ft 3100
+             :water-rights "riparian (verify with county)"
+             :quality-notes "excellent, natural filtration through granite"
+             :development "maintain natural flow, no heavy equipment near source"}
+            {:name "Lower Spring"  
+             :baseline-gpm 8
+             :dry-season-gpm 3
+             :elevation-ft 3050
+             :water-rights "riparian (verify with county)"
+             :quality-notes "seasonal variation, monitor for nitrates"
+             :development "potential for small spring box installation"}]
+  
+  :well {:location "central to patches P01-P03"
+         :depth-ft 180
+         :pump-gpm-max 30
+         :drawdown-ft nil  ; requires pump test
+         :recovery-test-date nil  ; schedule before first season
+         :water-rights "overlying landowner rights"
+         :quality-notes "hard water, high mineral content beneficial"}}
+
+ :storage
+ {:ponds [{:name "Holding Pond A"
+           :capacity-acft 3.0
+           :location "downhill from Upper Spring"
+           :purpose "seasonal storage + livestock water"
+           :liner "bentonite clay (natural sealing)"
+           :spillway "rock-lined emergency overflow"}]
+  :tanks [{:name "HDPE Tank North"
+           :capacity-gal 20000
+           :location "near P02 for distribution"
+           :purpose "daily use + fire protection"
+           :pump-pressure-psi 25}]}
+
+ :distribution
+ {:method :drip-tape-primary
+  :backup-method :low-pressure-sprinkler
+  :pressure-range-psi [10 20]
+  :filtration {:primary "sand media filter"
+               :secondary "100-mesh screen filter"
+               :backwash-schedule "weekly during irrigation season"}
+  :zones [{:patches ["P01" "P02"]
+           :total-acres 14.4
+           :infrastructure "main line + zone valves"}
+          {:patches ["P03" "P04"] 
+           :total-acres 9.1
+           :infrastructure "portable systems for flexibility"}]}
+
+ ;; Water budgeting
+ :demand-planning
+ {:corn-etc-inches-season 26  ; mid-range for elevation/climate
+  :efficiency-drip 0.90
+  :efficiency-sprinkler 0.75
+  :application-rate-in-hr 0.25
+  :soil-storage-in 4.0  ; estimated available water capacity
+  :irrigation-trigger-pct 50}  ; refill at 50% depletion
+
+ ;; Sustainable yield calculations  
+ :sustainability
+ {:spring-safe-yield-gpm 8  ; conservative estimate for dry years
+  :well-safe-yield-gpm 15   ; pending pump test results
+  :total-daily-yield-gal 33120  ; 8+15 gpm × 1440 min/day
+  :daily-acin-available 1.22   ; 33120 gal ÷ 27154 gal/ac-in
+  :sustainable-acres-at-26in 28.5}  ; well above our 18 planned acres
+
+ ;; Nitrate accounting (veganic N budget)
+ :water-quality
+ {:nitrate-testing-schedule "monthly during growing season"
+  :target-ppm-no3-n 10  ; typical for spring water
+  :n-credit-lb-per-acin 2.4  ; 10 ppm × 2.4 conversion factor
+  :annual-n-from-irrigation-lb-ac 62}  ; 26 in × 2.4 lb/ac-in
+ 
+ ;; Monitoring requirements
+ :monitoring
+ {:flow-measurement "V-notch weirs on both springs"
+  :pressure-gauges "at pump, tank, and zone manifolds" 
+  :soil-moisture "VWC sensors at 6in and 18in depths"
+  :weather-station "on-site ET calculation"
+  :data-logging "15-minute intervals, cloud backup"}}
+  

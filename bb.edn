@@ -1,0 +1,106 @@
+{:deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.clojure/core.async {:mvn/version "1.6.681"}
+        org.clojure/spec.alpha {:mvn/version "0.3.218"}
+        http-kit/http-kit {:mvn/version "2.7.0"}
+        hiccup/hiccup {:mvn/version "1.0.5"}
+        markdown-clj/markdown-clj {:mvn/version "1.11.4"}
+        cheshire/cheshire {:mvn/version "5.11.0"}
+        babashka/fs {:mvn/version "0.4.19"}}
+
+ :paths ["build" "site-dsl/src" "src"]
+
+ :tasks
+ {:requires ([babashka.fs :as fs]
+             [babashka.process :refer [shell]]
+             [clojure.string :as str])
+  :init (do (defn sh [& args] (apply shell {:out :inherit :err :inherit} args))
+            (defn msg [emoji & parts] (println emoji (str/join " " parts))))
+
+  clean {:doc "Clean all generated files and build artifacts"
+         :task (do (msg "🧹" "Cleaning build artifacts...")
+                   (fs/delete-tree "web/dist" {:force true})
+                   (fs/delete-tree "web/src/lib/generated" {:force true})
+                   (fs/delete-tree "site-dsl/target" {:force true})
+                   (fs/delete-tree "target" {:force true})
+                   (fs/delete-tree ".shadow-cljs" {:force true})
+                   (msg "✅" "Clean complete - ready for fresh build"))}
+
+  parse {:doc "Parse docs/ markdown → validated EDN data"
+         :task (do (msg "📖" "Parsing markdown with ClojureScript...")
+                   (sh "npx" "shadow-cljs" "run" "site.parser/main" :dir "site-dsl")
+                   (msg "✅" "Parsing complete"))}
+
+  generate {:doc "Generate Svelte components from parsed data"
+            :depends [parse]
+            :task (do (msg "⚡" "Generating Svelte components...")
+                      (sh "npx" "shadow-cljs" "run" "site.generator/main" :dir "site-dsl")
+                      (msg "✅" "Component generation complete"))}
+
+  validate {:doc "Validate all configuration and generated data"
+            :task (do (msg "🔍" "Running Clojure.spec validation...")
+                      (load-file "build/site/specs.clj")
+                      ((resolve 'site.specs/validate-all-configs))
+                      (msg "✅" "Spec validation passed"))}
+
+  bundle {:doc "Bundle Svelte SPA with Vite"
+          :depends [generate validate]
+          :task (do (msg "📦" "Bundling Svelte SPA...")
+                    (sh "npm" "ci" :dir "web")
+                    (sh "npm" "run" "build" :dir "web")
+                    (msg "✅" "SPA bundle complete"))}
+
+  build:all {:doc "Complete functional build: parse → generate → validate → bundle"
+             :depends [clean bundle]
+             :task (do (msg "🌽" "NixtaVeganic build pipeline complete!")
+                       (msg "🌐" "Run 'bb serve' to start local server")
+                       (when (fs/exists? "web/dist/index.html")
+                         (msg "📊" "Site built successfully - ready for deployment")))}
+
+  build:dev {:doc "Development build without clean step"
+             :depends [generate bundle]
+             :task (msg "🔄" "Development build complete")}
+
+  test {:doc "Run comprehensive test suite with Clojure.spec"
+        :task (do (msg "🧪" "Running test suite...")
+                  (load-file "test/site/core_test.clj")
+                  (if ((resolve 'site.core-test/run-all-tests))
+                    (msg "✅" "All tests passed")
+                    (do (msg "❌" "Tests failed")
+                        (System/exit 1))))}
+
+  serve {:doc "Serve static site via Babashka HTTP server"
+         :task (do (when-not (fs/exists? "web/dist/index.html")
+                     (msg "⚠️" "No built site found - run 'bb build:all' first"))
+                   (msg "🚀" "Starting Babashka server...")
+                   (load-file "scripts/serve.clj")
+                   ((resolve 'serve/start-server)))}
+
+  dev {:doc "Development mode: build + serve + watch"
+       :task (do (msg "🔄" "Starting development mode...")
+                 (future (sh "bb" "build:dev"))
+                 (Thread/sleep 3000)
+                 (msg "👀" "File watching enabled - edit docs/ for live reload")
+                 (sh "bb" "serve"))}
+
+  lint {:doc "Lint Clojure code and validate EDN files"
+        :task (do (msg "📐" "Linting and formatting...")
+                  (doseq [edn-file (fs/glob "config" "*.edn")]
+                    (try (clojure.edn/read-string (slurp (str edn-file)))
+                         (msg "✅" "Valid EDN:" (fs/file-name edn-file))
+                         (catch Exception e
+                           (msg "❌" "Invalid EDN:" (fs/file-name edn-file) (.getMessage e)))))
+                  (msg "✅" "Lint complete"))}
+
+  config:show {:doc "Display current farm configuration"
+               :task (do (msg "📋" "Farm Configuration:")
+                         (println (slurp "config/farm.meta.edn")))}
+
+  help {:doc "Show available tasks and documentation"
+        :task (do (msg "🌽" "NixtaVeganic Functional Farm Build System")
+                  (msg "📚" "Available tasks:")
+                  (println "  build:all       Complete functional build pipeline")
+                  (println "  serve           Start Babashka HTTP server")
+                  (println "  test            Run Clojure.spec test suite")
+                  (println "  clean           Clean all build artifacts")
+                  (println "  lint            Validate EDN files and Clojure code")
+                  (println "  config:show     Display farm configuration"))}}}

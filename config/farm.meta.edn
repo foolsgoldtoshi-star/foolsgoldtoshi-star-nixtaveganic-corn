@@ -1,0 +1,32 @@
+{:name "NixtaVeganic Corn Project"
+ :latitude-deg 38.8  ; ~Cloverdale, CA
+ :longitude-deg -123.0
+ :mean-elevation-ft 3000
+ :area-ac-total 100
+ :ownership-notes "On-site springs and a drilled well. Confirm water rights & reporting.
+                   Maintain buffers around springs; exclude heavy equipment."
+ :soil-series-hypothesis ["Inceptisols" "Ultisols"]  ; replace with NRCS SSURGO survey
+ :regulatory {:county "TBD"
+              :state "CA" 
+              :permits ["well" "food processing (nixtamal)"]}
+ 
+ ;; Climate data (validated by spec)
+ :climate {:hardiness-zone "9a-9b"
+           :first-frost {:typical "mid-late November"
+                        :elevation-adjusted "earlier at 3000ft"}
+           :last-frost {:typical "late February - March"
+                       :elevation-adjusted "later at 3000ft"}
+           :growing-season-days 200}
+ 
+ ;; UV and solar data
+ :solar {:latitude-comparable "Cloverdale CA 38.8°N"
+         :uv-index-summer "8-10 (very high)"
+         :solar-exposure "full sun required"
+         :orientation-preference "north-south rows"}
+ 
+ ;; Ecological context
+ :ecology {:ecosystem-approach "Helen Atthowe principles"
+           :soil-disturbance "minimal (no-till only)"
+           :cover-requirement "continuous cover mandatory"
+           :biodiversity-focus "insectary hedgerows, perennial strips"
+           :fertility-approach "veganic (plant-based only)"}}

@@ -1,0 +1,53 @@
+;; Crop rotations for no-till veganic corn system
+{:rotations
+ {:corn-no-till-roll
+  {:description "Roller-crimp cover crop → no-till corn sequence"
+   :year-0-cover {:cereal :cereal-rye
+                  :cereal-notes "biomass producer, weed suppression"
+                  :legume :hairy-vetch  
+                  :legume-notes "nitrogen fixation, soil biology"
+                  :sow-window ["Sep 25" "Nov 1"]
+                  :seeding-rate {:rye-lbs-ac 90
+                                :vetch-lbs-ac 25}}
+   :termination {:method :roller-crimper
+                 :timing :rye-anthesis-plus
+                 :timing-notes "full flower to soft dough stage"
+                 :biomass-target-t-ha [7 12]
+                 :ground-cover-target-pct 90}
+   :cash-crop {:species :field-corn
+               :planting-method :no-till-planter
+               :row-spacing-in 30
+               :seeding-rate-seeds-ac 32000
+               :varieties-preferred ["drought-tolerant dent corn" 
+                                   "95-105 CRM adapted to elevation"]}
+   :weed-management {:primary "mulch suppression + canopy closure"
+                     :mechanical "hand removal at field edges only"
+                     :cultivation "none (strict no-till)"}
+   :harvest {:timing "physiological maturity + field dry-down"
+             :moisture-target-pct 15.5
+             :storage-method "on-farm bins with aeration"}}
+  
+  :cover-only-rest
+  {:description "Perennial cover for soil building/carbon sequestration"
+   :species [:red-clover :white-clover :chicory :plantain]
+   :establishment "frost-seed in early spring"
+   :duration-years 2
+   :management "mow 2x/year, no tillage"
+   :purpose "nitrogen fixation, soil biology, carbon storage"}}
+ 
+ ;; Veganic fertility inputs
+ :fertility-inputs
+ {:plant-based-only true
+  :sources {:legume-n "from cover crop fixation"
+            :compost "on-site plant material only"
+            :ramial-wood "chipped branches ≤2in diameter"
+            :rock-powders "basalt meal, kelp meal if soil tests indicate"
+            :irrigation-n "nitrate in spring/well water (test & account)"}
+  :prohibited ["animal manures" "blood meal" "bone meal" "fish emulsion"]}
+ 
+ ;; Residue management
+ :residue-targets
+ {:post-harvest-cover-pct 75  ; corn stalks + volunteer cover
+  :biomass-retention "all crop residues remain on field"
+  :incorporation "none (surface decomposition only)"
+  :carbon-input-goal-t-ha 5}}  ; annual carbon addition target

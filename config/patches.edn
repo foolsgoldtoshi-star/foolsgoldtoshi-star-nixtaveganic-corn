@@ -1,0 +1,54 @@
+;; Farmable patches: contiguous areas bounded by trees/obstructions
+;; All data validated by clojure.spec
+{:patches
+ [{:id "P01"
+   :area-ac 4.8
+   :slope-pct 3.5
+   :aspect :SSW
+   :geometry "POLYGON((...TBD...))"  ; WKT or GeoJSON when surveyed
+   :access :east-gate
+   :soil-notes "Well-drained, slight slope"
+   :limitations ["narrow headlands" "equipment ≤6ft"]}
+  
+  {:id "P02" 
+   :area-ac 9.6
+   :slope-pct 2.0
+   :aspect :W
+   :geometry "POLYGON((...TBD...))"
+   :access :north-lane
+   :soil-notes "Level, good for larger equipment"
+   :limitations ["seasonal wet spot in NE corner"]}
+  
+  {:id "P03"
+   :area-ac 1.9
+   :slope-pct 5.0
+   :aspect :SE
+   :geometry "POLYGON((...TBD...))"
+   :access :south-lane
+   :soil-notes "Steeper slope, contour planting required"
+   :limitations ["erosion risk" "equipment ≤4ft" "hand harvesting"]}
+  
+  {:id "P04"
+   :area-ac 7.2
+   :slope-pct 1.5
+   :aspect :S
+   :geometry "POLYGON((...TBD...))"
+   :access :main-road
+   :soil-notes "Prime farmland, excellent drainage"
+   :limitations ["power line easement on east boundary"]}]
+ 
+ ;; Field management constraints 
+ :constraints
+ {:equipment-width {"1-2ac" "≤6ft implements"
+                    "3-5ac" "6-8ft implements"  
+                    "5+ac" "8-12ft implements"}
+  :turning-radius-ft 25
+  :buffer-from-trees-ft 15
+  :min-headland-width-ft 20
+  :traffic-patterns "permanent lanes to minimize compaction"}
+  
+ ;; Aggregate planning
+ :totals {:farmable-acres 23.5
+          :planned-corn-acres 18.0  ; 77% utilization
+          :cover-crop-acres 23.5    ; 100% coverage off-season
+          :fallow-rotation-acres 5.5}} ; rest/observation plots
