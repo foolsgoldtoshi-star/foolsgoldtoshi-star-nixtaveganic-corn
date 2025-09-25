@@ -12,3 +12,4 @@ export function applyTheme(t){
   document?.documentElement?.setAttribute('data-theme',t==='dark'?'dark':'light');
 }
 export function saveTheme(t){try{localStorage.setItem(KEY,t)}catch{}}
+

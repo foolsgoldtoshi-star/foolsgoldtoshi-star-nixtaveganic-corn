@@ -138,3 +138,4 @@ export const theme = createThemeStore();
 if (browser) {
   applyThemeToDocument(theme.getCurrentTheme());
 }
+

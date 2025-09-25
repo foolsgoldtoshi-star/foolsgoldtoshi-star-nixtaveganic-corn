@@ -145,3 +145,4 @@
    :generate-themed-css generate-themed-css
    :sage-light-palette sage-light-palette
    :jade-dark-palette jade-dark-palette})
+

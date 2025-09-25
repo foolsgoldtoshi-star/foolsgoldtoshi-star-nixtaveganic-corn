@@ -1,10 +1,51 @@
 (ns site.parser
-  (:require [clojure.string :as str]
+  (:require             [clojure.string :as str]
             [clojure.core.async :as a]))
 
 ;; ============================================================================
-;; Pure Markdown to AST Parser
+;; Pure Markdown to AST Parser (Enhanced for Living Ecosystem Model)
 ;; ============================================================================
+
+(defn extract-headings
+  "Extract headings for table of contents generation"
+  [ast]
+  (->> ast
+       (filter #(and (vector? %) (#{:h1 :h2 :h3} (first %))))
+       (map-indexed (fn [idx [level text]]
+                     {:level level
+                      :text text
+                      :anchor (str "heading-" idx)
+                      :id (-> text
+                             str/lower-case
+                             (str/replace #"[^a-z0-9]+" "-")
+                             (str/replace #"^-|-$" ""))}))))
+
+(defn extract-searchable-content
+  "Extract searchable content for search index"
+  [page]
+  (let [text-content (->> (:ast page)
+                         (filter vector?)
+                         (map second)
+                         (filter string?)
+                         (str/join " "))]
+    {:id (:id page)
+     :title (:title page)
+     :content text-content
+     :keywords (-> text-content
+                  str/lower-case
+                  (str/split #"\s+")
+                  (->> (filter #(> (count %) 3))
+                       (take 20)
+                       distinct
+                       vec))}))
+
+(defn create-search-index
+  "Create functional search index from pages"
+  [pages]
+  (->> pages
+       (map extract-searchable-content)
+       (map #(select-keys % [:id :title :content :keywords]))
+       vec))
 
 (defn md->ast 
   "Parse markdown string to AST (pure function)"
@@ -136,4 +177,5 @@
 ;; For Shadow-CLJS node-script target
 (when (exists? js/process)
   (set! *main-cli-fn* main))
+
 

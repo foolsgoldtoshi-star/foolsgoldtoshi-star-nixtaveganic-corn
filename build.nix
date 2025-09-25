@@ -105,3 +105,4 @@ in {
     echo "🖤🤎💙 Philosophy: Simple made easy, farms made functional"
   '';
 }
+

@@ -8,47 +8,59 @@
             (defn msg [emoji & parts] 
               (println emoji (str/join " " parts))))
 
-  build:gen {:task (do
-                     (shell {:dir "site-dsl"} "npm" "ci")
-                     (shell {:dir "site-dsl"} "npx" "shadow-cljs" "compile" "node-script")
-                     (shell {:dir "site-dsl"} "node" "target/main.js"))}
+  build:gen {:doc "Generate Svelte components from ClojureScript DSL"
+             :task (do (msg "🎊" "Generating living ecosystem components...")
+                       (shell {:dir "site-dsl"} "npm" "ci")
+                       (shell {:dir "site-dsl"} "npx" "shadow-cljs" "compile" "node-script")
+                       (shell {:dir "site-dsl"} "node" "target/main.js")
+                       (msg "🖤" "ClojureScript DSL → Svelte generation complete"))}
 
-  build:bundle {:task (do
-                        (shell {:dir "web"} "npm" "ci")
-                        (shell {:dir "web"} "npm" "run" "build"))}
+  build:bundle {:doc "Bundle SvelteKit with warm themes"
+                :task (do (msg "🤎" "Bundling SvelteKit with warm theming...")
+                          (shell {:dir "web"} "npm" "ci")
+                          (shell {:dir "web"} "npm" "run" "build")
+                          (msg "💙" "SvelteKit bundling complete"))}
 
-  build:site {:depends [build:gen build:bundle]}
+  build:site {:doc "Complete site build with living ecosystem features"
+              :depends [build:gen build:bundle]
+              :task (msg "🌱" "Living ecosystem site build complete!")}
 
-  lint:kondo {:task (do
-                      (println "Linting with clj-kondo…")
-                      (sh "clj-kondo" "--version")
-                      (sh "clj-kondo" "--lint" "site-dsl/src" "scripts" "config"))}
+  lint:kondo {:doc "Static analysis with clj-kondo"
+              :task (do (msg "🔍" "Linting with clj-kondo...")
+                        (sh "clj-kondo" "--version")
+                        (sh "clj-kondo" "--lint" "site-dsl/src" "scripts" "config")
+                        (msg "✅" "Static analysis complete"))}
 
-  fmt:write {:task (do
-                     (sh "find" "." "-name" "*.clj" "-exec" "zprint" "--write" "{}" "\\;")
-                     (sh "find" "." "-name" "*.cljs" "-exec" "zprint" "--write" "{}" "\\;")
-                     (sh "find" "." "-name" "*.edn" "-exec" "zprint" "--write" "{}" "\\;")
-                     (println "Formatted (80 cols) Clojure files."))}
+  fmt:write {:doc "Format all Clojure files to 80 columns"
+             :task (do (msg "📐" "Formatting to 80 columns...")
+                       (sh "find" "." "-name" "*.clj" "-exec" "zprint" "--write" "{}" "\\;")
+                       (sh "find" "." "-name" "*.cljs" "-exec" "zprint" "--write" "{}" "\\;")
+                       (sh "find" "." "-name" "*.edn" "-exec" "zprint" "--write" "{}" "\\;")
+                       (msg "✅" "80-column formatting complete"))}
 
-  fmt:check {:task (do
-                     (println "Use fmt:write to enforce formatting.")
-                     (sh "echo" "OK"))}
+  fmt:check {:doc "Check formatting without writing changes"
+             :task (do (msg "🔎" "Checking 80-column formatting...")
+                       (msg "💡" "Use fmt:write to enforce formatting"))}
 
-  clean {:task (do (fs/delete-tree "web/build" {:force true})
-                   (println "cleaned web/build"))}
+  clean {:doc "Clean build artifacts"
+         :task (do (fs/delete-tree "web/build" {:force true})
+                   (fs/delete-tree "web/dist" {:force true})
+                   (msg "🧹" "Build artifacts cleaned"))}
 
-  clean:deep {:task (do (fs/delete-tree "web/build" {:force true})
+  clean:deep {:doc "Deep clean for CI disk pressure relief"
+              :task (do (fs/delete-tree "web/build" {:force true})
+                        (fs/delete-tree "web/dist" {:force true})
                         (fs/delete-tree "web/node_modules" {:force true})
                         (fs/delete-tree "site-dsl/node_modules" {:force true})
                         (fs/delete-tree "site-dsl/.shadow-cljs" {:force true})
                         (fs/delete-tree "target" {:force true})
                         (fs/delete-tree ".shadow-cljs" {:force true})
-                        (println "🎊 Deep clean complete - CI disk pressure relief! 🖤"))}
+                        (msg "🎊" "Deep clean complete - CI disk pressure relief! 🖤"))}
 
-  ;; Enhanced pipeline tasks
-  build:all {:depends [build:site lint:kondo fmt:check]}
+  build:all {:doc "Complete functional build pipeline"
+             :depends [build:site lint:kondo fmt:check]
+             :task (msg "🌽" "Functional farm build pipeline complete!")}
   
-  ;; Development and deployment tasks
   dev {:doc "Development mode with live reload"
        :task (do (msg "🎊" "Starting development mode...")
                  (future (shell {:dir "."} "bb" "build:gen"))
@@ -73,4 +85,4 @@
   
   health {:doc "Run comprehensive system health checks"
           :task (do (load-file "scripts/health-check.clj")
-                    ((resolve 'health-check/run-health-checks)))}}}}
+                    ((resolve 'health-check/run-health-checks)))}}}

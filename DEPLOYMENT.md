@@ -148,3 +148,4 @@ bb lint:kondo     # Check for code issues
 - **Nix reproducibility**: Exact dependency versions pinned
 - **Static deployment**: No server-side attack surface
 - **HTTPS enforced**: GitHub Pages provides SSL automatically
+

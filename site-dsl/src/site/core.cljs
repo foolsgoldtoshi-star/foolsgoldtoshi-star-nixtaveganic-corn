@@ -88,8 +88,22 @@
     ;; Parse all markdown files with clj-nix integration
     (let [pages (parse-all)
         
-        ;; Generate sitemap
+        ;; Generate enhanced navigation data
         sitemap (map #(select-keys % [:id :title]) pages)
+        
+        ;; Create search index for living ecosystem functionality
+        search-index (p/create-search-index pages)
+        
+        ;; Generate navigation relationships (prev/next)
+        sorted-pages (sort-by :id pages)
+        nav-graph (map-indexed (fn [idx page]
+                                {:id (:id page)
+                                 :title (:title page)
+                                 :prev (when (> idx 0) 
+                                        (select-keys (nth sorted-pages (dec idx)) [:id :title]))
+                                 :next (when (< idx (dec (count sorted-pages)))
+                                        (select-keys (nth sorted-pages (inc idx)) [:id :title]))})
+                              sorted-pages)
         
         ;; Ensure output directories exist
         _ (ensure-dir! "../web/src/lib/generated")
@@ -99,13 +113,26 @@
     (doseq [page pages]
       (gen-page page))
     
-    ;; Write sitemap as JS module for SvelteKit imports
+    ;; Write enhanced navigation data for living ecosystem
     (spit* "../web/src/lib/generated/sitemap.js" 
-           (str "// Auto-generated sitemap\n"
+           (str "// Auto-generated sitemap for functional farm system\n"
                 "export default " (.stringify js/JSON (clj->js sitemap) nil 2) ";\n"))
-    ;; Also keep JSON copy for external use
+    
+    ;; Write search index for ecosystem-wide knowledge discovery
+    (spit* "../web/src/lib/generated/search-index.js"
+           (str "// Auto-generated search index for living farm knowledge\n"
+                "export default " (.stringify js/JSON (clj->js search-index) nil 2) ";\n"))
+    
+    ;; Write navigation graph for ecosystem browsing
+    (spit* "../web/src/lib/generated/navigation.js"
+           (str "// Auto-generated navigation graph\n"
+                "export default " (.stringify js/JSON (clj->js nav-graph) nil 2) ";\n"))
+    
+    ;; Keep JSON copies for external ecosystem integration
     (spit* "../web/static/sitemap.json" 
            (.stringify js/JSON (clj->js sitemap) nil 2))
+    (spit* "../web/static/search-index.json"
+           (.stringify js/JSON (clj->js search-index) nil 2))
     
     ;; Generate component index file (fix JS identifier names)
     (let [exports (str/join "\n" 
@@ -118,14 +145,21 @@
     
     (println "✅ Generated" (count pages) "Svelte components")
     (println "📊 Created sitemap with" (count sitemap) "entries")
-    (println "🎯 Site generation complete!")
+    (println "🔍 Generated search index with" (count search-index) "searchable pages")
+    (println "⬅️➡️ Created navigation graph for ecosystem browsing")
+    (println "🎯 Living ecosystem model generation complete!")
     (println "🔧 clj-nix integration: Enhanced Nix + Clojure workflow")
+    (println "🌱 Ready for: Real-time agronomic data integration")
     
     {:pages (count pages)
      :components (count pages)
      :sitemap (count sitemap)
+     :search-index (count search-index)
+     :navigation-graph (count nav-graph)
+     :ecosystem-features [:search :navigation :toc]
      :build-info build-info
-     :clj-nix-enhanced true}))
+     :clj-nix-enhanced true
+     :living-model-ready true}))
 
 ;; ============================================================================
 ;; Main Entry Points

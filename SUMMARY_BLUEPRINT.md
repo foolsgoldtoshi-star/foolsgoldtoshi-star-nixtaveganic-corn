@@ -257,3 +257,4 @@ nix develop → bb build:all → bb serve → GitHub Pages
 *Built with functional programming principles, ecological wisdom, and modern web technology by foolsgoldtoshi-star*
 
 **"The first functional farm documentation system in the world!"** 🌽✨
+
