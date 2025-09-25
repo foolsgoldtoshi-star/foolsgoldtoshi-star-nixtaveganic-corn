@@ -1,5 +1,5 @@
 <script>
-  import sitemap from '/content/sitemap.json';
+  import sitemap from '/sitemap.json';
 </script>
 
 <h1>NixtaVeganic Corn Wiki</h1>

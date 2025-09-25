@@ -7,12 +7,13 @@
           (apply shell {:dir "." :out :inherit :err :inherit} args))
 
   build:gen {:task (do
-                     (sh "npm" "ci" :dir "site-dsl")
-                     (sh "npx" "shadow-cljs" "run" "node-script" :dir "site-dsl"))}
+                     (shell {:dir "site-dsl"} "npm" "ci")
+                     (shell {:dir "site-dsl"} "npx" "shadow-cljs" "compile" "node-script")
+                     (shell {:dir "site-dsl"} "node" "target/main.js"))}
 
   build:bundle {:task (do
-                        (sh "npm" "ci" :dir "web")
-                        (sh "npm" "run" "build" :dir "web"))}
+                        (shell {:dir "web"} "npm" "ci")
+                        (shell {:dir "web"} "npm" "run" "build"))}
 
   build:site {:depends [build:gen build:bundle]}
 

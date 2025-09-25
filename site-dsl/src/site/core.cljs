@@ -1,26 +1,27 @@
 (ns site.core
   (:require [clojure.core.async :as a]
             [clojure.string :as str]
-            [clojure.java.io :as io]
             [site.parser :as p]
             [site.render.svelte :as sv]))
 
+;; Node.js File System API
+(def fs (js/require "fs"))
+(def path (js/require "path"))
+
 ;; ============================================================================
-;; File System Utilities
+;; File System Utilities (Node.js compatible)
 ;; ============================================================================
 
-(defn spit* [path content]
+(defn spit* [file-path content]
   "Write content to file, creating directories as needed"
-  (let [file (io/file path)]
-    (-> file .getParentFile .mkdirs)
-    (spit path content)))
+  (let [dir-path (.dirname path file-path)]
+    (.mkdirSync fs dir-path #js {:recursive true})
+    (.writeFileSync fs file-path content)))
 
 (defn ensure-dir! [dir-path]
   "Ensure directory exists"
-  (let [dir (io/file dir-path)]
-    (when-not (.exists dir)
-      (.mkdirs dir))
-    dir-path))
+  (.mkdirSync fs dir-path #js {:recursive true})
+  dir-path)
 
 ;; ============================================================================
 ;; Core Generation Functions
@@ -28,8 +29,9 @@
 
 (defn parse-one [file-path]
   "Parse a single markdown file to page data"
-  (let [ast (p/md->ast (slurp file-path))
-        filename (.getName (io/file file-path))
+  (let [content (.readFileSync fs file-path "utf8")
+        ast (p/md->ast content)
+        filename (.basename path file-path)
         base-id (str/replace filename #"\.md$" "")]
     {:id base-id 
      :file-path file-path
@@ -55,28 +57,16 @@
 ;; ============================================================================
 
 (defn parse-all []
-  "Parse all markdown files in parallel"
-  (let [in-ch (a/chan 10)
-        out-ch (a/chan 10)
-        docs-dir "../docs"
-        files (->> (file-seq (io/file docs-dir))
-                   (filter #(and (.isFile %)
-                                (str/ends-with? (.getName %) ".md")))
-                   (map #(.getPath %)))]
+  "Parse all markdown files"
+  (let [docs-dir "../docs"
+        files (->> (.readdirSync fs docs-dir)
+                   (filter #(str/ends-with? % ".md"))
+                   (map #(.join path docs-dir %)))]
     
     (println "📁 Found" (count files) "markdown files")
     
-    ;; Feed files to channel
-    (a/go
-      (doseq [file files]
-        (a/>! in-ch file))
-      (a/close! in-ch))
-    
-    ;; Process files in parallel
-    (a/pipeline 8 out-ch (map parse-one) in-ch)
-    
-    ;; Collect all results
-    (a/<!! (a/into [] out-ch))))
+    ;; Parse files sequentially (simpler for Node.js)
+    (map parse-one files)))
 
 (defn gen-all []
   "Main generation function: parse all docs → generate Svelte components"
@@ -96,13 +86,17 @@
     (doseq [page pages]
       (gen-page page))
     
-    ;; Write sitemap JSON
+    ;; Write sitemap JSON (SvelteKit expects it in static root)
+    (spit* "../web/static/sitemap.json" 
+           (.stringify js/JSON (clj->js sitemap) nil 2))
+    ;; Also keep a copy in content directory
     (spit* "../web/static/content/sitemap.json" 
-           (js/JSON.stringify (clj->js sitemap) nil 2))
+           (.stringify js/JSON (clj->js sitemap) nil 2))
     
-    ;; Generate component index file
+    ;; Generate component index file (fix JS identifier names)
     (let [exports (str/join "\n" 
-                           (map #(str "export { default as " (:id %) 
+                           (map #(str "export { default as Page" 
+                                     (str/replace (:id %) #"[^a-zA-Z0-9]" "_")
                                      " } from './" (:id %) ".svelte';") 
                                 pages))]
       (spit* "../web/src/lib/generated/index.js" 
@@ -130,9 +124,14 @@
       (println "❌ Generation failed:" (.-message e))
       1)))
 
-;; For Shadow-CLJS node-script execution
-(when (exists? js/process)
-  (set! *main-cli-fn* main))
+;; Main entry point for Node.js
+(defn -main [& args]
+  "Main entry point for Node.js execution"
+  (main))
+
+;; Auto-run when executed as script
+(when (and (exists? js/process) (= (.-argv js/process) js/process.argv))
+  (main))
 
 ;; ============================================================================
 ;; Development Helpers

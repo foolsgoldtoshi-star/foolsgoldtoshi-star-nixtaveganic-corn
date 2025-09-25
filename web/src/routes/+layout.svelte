@@ -6,7 +6,7 @@
 	import LanguageToggle from '$lib/components/LanguageToggle.svelte';
 	import { theme } from '$lib/stores/theme.js';
 	import { currentLanguage, t } from '$lib/stores/i18n.js';
-	import sitemap from '/content/sitemap.json';
+	import sitemap from '/sitemap.json';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	

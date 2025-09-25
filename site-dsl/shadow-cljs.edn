@@ -1,8 +1,7 @@
 {:source-paths ["src"]
  :dependencies [[reagent "1.2.0"]
                 [hiccup "1.0.5"]
-                [cljs-ajax "0.8.4"]
-                [clojure/core.async "1.6.673"]]
+                [org.clojure/core.async "1.6.681"]]
  
  :dev-http {8280 {:root "resources/public"}}
  
