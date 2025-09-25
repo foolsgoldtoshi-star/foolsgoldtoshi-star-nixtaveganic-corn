@@ -31,6 +31,14 @@
   
   // Keyboard navigation for ecosystem exploration
   function handleKeydown(event) {
+    // Press / to focus search
+    if (event.key === '/' && !isOpen) {
+      event.preventDefault();
+      searchInput?.focus();
+      isOpen = true;
+    }
+    
+    // Escape to close
     if (event.key === 'Escape') {
       searchTerm = '';
       isOpen = false;
@@ -50,7 +58,7 @@
       bind:this={searchInput}
       bind:value={searchTerm}
       type="text"
-      placeholder="🔍 Search functional farm knowledge..."
+      placeholder="🔍 Search functional farm knowledge... (Press / to focus)"
       class="search-input"
       aria-label="Search documentation"
     />

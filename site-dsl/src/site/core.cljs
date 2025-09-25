@@ -50,9 +50,13 @@
 
 (defn gen-page [{:keys [id ast]}]
   "Generate Svelte component from page AST"
-  (let [title (some #(when (= (first %) :h1) (second %)) ast)
+  (let [raw-title (some #(when (= (first %) :h1) (second %)) ast)
+        ;; Strip numeric prefixes (NN_) for prettier display while keeping ordering
+        clean-title (if raw-title
+                     (str/replace raw-title #"^\d+_" "")
+                     (str/replace id #"_" " "))
         page-data {:id id 
-                   :title (or title (str/replace id #"_" " "))
+                   :title clean-title
                    :body (remove #(= (first %) :h1) ast)}
         svelte-content (sv/page->svelte page-data)
         output-path (str "../web/src/lib/generated/" id ".svelte")]
