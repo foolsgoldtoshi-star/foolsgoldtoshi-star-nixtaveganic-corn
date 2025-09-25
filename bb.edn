@@ -36,4 +36,5 @@
                    (println "cleaned web/build"))}
 
   build:all {:depends [build:site lint:kondo fmt:check]}
-  serve {:task (do (shell {:dir "."} "bb" "scripts/serve.clj"))}}}
+  serve {:task (do (load-file "scripts/serve.clj") 
+                   ((resolve 'serve/start-server)))}}}
