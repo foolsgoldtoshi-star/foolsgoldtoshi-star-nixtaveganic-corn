@@ -1,61 +1,14 @@
 <script>
-  import { theme, themes } from '$lib/stores/theme.js';
-  import { currentLanguage } from '$lib/stores/i18n.js';
-  
-  let isOpen = false;
-  
-  $: currentTheme = themes[$theme];
-  $: t = (key) => {
-    // Simple translation helper
-    const translations = {
-      en: { lightMode: 'Light Sage', darkMode: 'Dark Jade', theme: 'Theme' },
-      es: { lightMode: 'Salvia Claro', darkMode: 'Jade Oscuro', theme: 'Tema' }
-    };
-    return translations[$currentLanguage]?.[key] || key;
-  };
+  import { applyTheme, saveTheme, getInitialTheme } from '$lib/theme.js';
+  export let current = 'light';
+  function toggle() {
+    const next = current === 'dark' ? 'light' : 'dark';
+    current = next; applyTheme(next); saveTheme(next);
+  }
 </script>
-
-<div class="theme-toggle">
-  <button 
-    class="theme-button"
-    on:click={() => isOpen = !isOpen}
-    aria-label="Toggle theme"
-  >
-    <span class="theme-icon">
-      {$theme === 'light' ? '🌅' : '🌙'}
-    </span>
-    <span class="theme-name">{currentTheme.name}</span>
-    <span class="dropdown-arrow" class:open={isOpen}>▼</span>
-  </button>
-  
-  {#if isOpen}
-    <div class="theme-dropdown">
-      {#each Object.entries(themes) as [themeKey, themeData]}
-        <button
-          class="theme-option"
-          class:active={$theme === themeKey}
-          on:click={() => {
-            theme.set(themeKey);
-            isOpen = false;
-          }}
-        >
-          <span class="option-icon">
-            {themeKey === 'light' ? '🌅' : '🌙'}
-          </span>
-          <span class="option-name">{themeData.name}</span>
-          <span class="option-desc">
-            {themeKey === 'light' ? t('lightMode') : t('darkMode')}
-          </span>
-        </button>
-      {/each}
-    </div>
-  {/if}
-</div>
-
-<!-- Click outside to close -->
-{#if isOpen}
-  <div class="overlay" on:click={() => isOpen = false}></div>
-{/if}
+<button class="theme-toggle" on:click={toggle} aria-label="Toggle theme">
+  <span>{current === 'dark' ? 'Dark' : 'Light'}</span><span>•</span><span>Warm</span>
+</button>
 
 <style>
   .theme-toggle {

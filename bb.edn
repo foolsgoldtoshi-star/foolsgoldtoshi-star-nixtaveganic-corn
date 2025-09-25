@@ -2,37 +2,29 @@
  :tasks
  {:requires ([babashka.fs :as fs]
              [babashka.process :refer [shell]]
-             [clojure.string :as str]
-             [zprint.core :as zp])
+             [clojure.string :as str])
   :init (defn sh [& args]
           (apply shell {:dir "." :out :inherit :err :inherit} args))
 
-  ;; ----- build steps -----
   build:gen {:task (do
-                     (sh "bb" "run" "-m" "site.core/gen-all"))}
+                     (sh "npm" "ci" :dir "site-dsl")
+                     (sh "npx" "shadow-cljs" "run" "node-script" :dir "site-dsl"))}
+
   build:bundle {:task (do
-                        (sh "node" "--version")
-                        (sh "npx" "vite" "build" :dir "web"))}
-  ;; run generator then bundle
+                        (sh "npm" "ci" :dir "web")
+                        (sh "npm" "run" "build" :dir "web"))}
+
   build:site {:depends [build:gen build:bundle]}
 
-  ;; ----- lint with clj-kondo -----
   lint:kondo {:task (do
                       (println "Linting with clj-kondo…")
-                      (sh "clj-kondo" "--lint"
-                          "site-dsl/src" "scripts" "config"))}
+                      (sh "clj-kondo" "--version")
+                      (sh "clj-kondo" "--lint" "site-dsl/src" "scripts" "config"))}
 
-  ;; ----- format Clojure-related files to 80 cols (zprint) -----
-  fmt:write {:task (let [exts (set ["clj" "cljs" "cljc" "edn" "bb"])
-                         all-files (fs/glob "." "**/*.*")
-                         clj-files (filter (fn [f] 
-                                             (let [ext (last (str/split (str f) (re-pattern "\\.")))]
-                                               (contains? exts ext))) 
-                                           all-files)]
-                     (doseq [f clj-files]
-                       (let [s (slurp (str f))
-                             out (zp/zprint-str s {:parse-string? true})]
-                         (spit (str f) out)))
+  fmt:write {:task (do
+                     (sh "find" "." "-name" "*.clj" "-exec" "zprint" "--write" "{}" "\\;")
+                     (sh "find" "." "-name" "*.cljs" "-exec" "zprint" "--write" "{}" "\\;")
+                     (sh "find" "." "-name" "*.edn" "-exec" "zprint" "--write" "{}" "\\;")
                      (println "Formatted (80 cols) Clojure files."))}
 
   fmt:check {:task (do
@@ -42,36 +34,5 @@
   clean {:task (do (fs/delete-tree "web/build" {:force true})
                    (println "cleaned web/build"))}
 
-  ;; ----- full pipeline -----
-  build:all {:depends [build:site lint:kondo fmt:write]}
-
-  ;; ----- github pages deployment -----
-  pages:build {:doc "Build for GitHub Pages deployment"
-               :task (do (println "🌐 Building for GitHub Pages...")
-                         (sh "bb" "build:site")
-                         (sh "npx" "vite" "build" "--base=/foolsgoldtoshi-star-nixtaveganic-corn/" :dir "web")
-                         (println "✅ GitHub Pages build complete"))}
-
-  pages:preview {:doc "Preview GitHub Pages build locally"
-                 :depends [pages:build]
-                 :task (do (println "🔍 Previewing GitHub Pages build...")
-                           (sh "npx" "vite" "preview" "--port" "8080" :dir "web"))}
-
-  ;; ----- branch management -----
-  branch:sync {:doc "Sync dev-unstable with highvalley-wake"
-               :task (do (println "🔄 Syncing branches...")
-                         (sh "git" "checkout" "dev-unstable")
-                         (sh "git" "merge" "highvalley-wake")
-                         (sh "git" "push" "origin" "dev-unstable")
-                         (sh "git" "checkout" "highvalley-wake")
-                         (println "✅ Branch sync complete"))}
-
-  branch:create {:doc "Create dev-unstable branch if it doesn't exist"
-                 :task (do (println "🌿 Creating dev-unstable branch...")
-                           (sh "git" "checkout" "-b" "dev-unstable")
-                           (sh "git" "push" "-u" "origin" "dev-unstable")
-                           (sh "git" "checkout" "highvalley-wake")
-                           (println "✅ dev-unstable branch created"))}
-
-  ;; ----- serve -----
+  build:all {:depends [build:site lint:kondo fmt:check]}
   serve {:task (do (sh "bb" "scripts/serve.clj"))}}}

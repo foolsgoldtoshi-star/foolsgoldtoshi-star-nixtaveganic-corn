@@ -1,109 +1,11 @@
 <script>
-	import sitemap from '/content/sitemap.json';
-	
-	let searchTerm = '';
-	$: filteredPages = sitemap.filter(page => 
-		page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-		page.id.toLowerCase().includes(searchTerm.toLowerCase())
-	);
+  if (typeof window !== 'undefined') {
+    const base = import.meta.env.BASE_PATH || '/foolsgoldtoshi-star-nixtaveganic-corn';
+    const target = (base === '' ? '' : base) + '/en/';
+    if (location.pathname !== target) location.replace(target);
+  }
 </script>
-
-<svelte:head>
-	<title>🌽 NixtaVeganic Corn - Home</title>
-</svelte:head>
-
-<div class="home-container">
-	<header class="hero">
-		<div class="hero-content">
-			<h1>🌽 NixtaVeganic Corn</h1>
-			<p class="subtitle">
-				Ecological, no-till, veganic field corn system with on-site nixtamalization
-			</p>
-			<p class="description">
-				A Git-first farm documentation system treating agriculture as an ecosystem
-				and codebase: versioned, observable, and reversible.
-			</p>
-		</div>
-	</header>
-
-	<section class="quick-info">
-		<div class="info-grid">
-			<div class="info-card">
-				<h3>🏔️ Elevation</h3>
-				<p>~3,000 ft elevation</p>
-				<p>Latitude ~Cloverdale, CA</p>
-			</div>
-			<div class="info-card">
-				<h3>🌱 Method</h3>
-				<p>No-till veganic</p>
-				<p>Cover crop roller-crimp</p>
-			</div>
-			<div class="info-card">
-				<h3>💧 Water</h3>
-				<p>On-site springs & aquifer</p>
-				<p>Sustainable yield planning</p>
-			</div>
-			<div class="info-card">
-				<h3>🌽 Processing</h3>
-				<p>Nixtamalization SOP</p>
-				<p>Fresh masa production</p>
-			</div>
-		</div>
-	</section>
-
-	<section class="documentation">
-		<h2>📚 Documentation</h2>
-		
-		<div class="search-container">
-			<input 
-				type="text" 
-				bind:value={searchTerm} 
-				placeholder="Search documentation..." 
-				class="search-input"
-			/>
-		</div>
-
-		<div class="doc-grid">
-			{#each filteredPages as page}
-				<a href="/wiki/{page.id}" class="doc-card">
-					<h3>{page.title}</h3>
-					<p class="doc-id">{page.id}</p>
-				</a>
-			{/each}
-		</div>
-		
-		{#if filteredPages.length === 0}
-			<p class="no-results">No documentation found matching "{searchTerm}"</p>
-		{/if}
-	</section>
-
-	<section class="getting-started">
-		<h2>🚀 Getting Started</h2>
-		<div class="steps">
-			<div class="step">
-				<div class="step-number">1</div>
-				<div class="step-content">
-					<h3>Read the Overview</h3>
-					<p>Start with the <a href="/wiki/00_overview">Project Overview</a> to understand our ecological approach.</p>
-				</div>
-			</div>
-			<div class="step">
-				<div class="step-number">2</div>
-				<div class="step-content">
-					<h3>Explore the Agronomy</h3>
-					<p>Dive into <a href="/wiki/04_agronomy_corn">Corn Agronomy</a> and <a href="/wiki/05_cover_crops_no_till">No-Till Methods</a>.</p>
-				</div>
-			</div>
-			<div class="step">
-				<div class="step-number">3</div>
-				<div class="step-content">
-					<h3>Check Water Planning</h3>
-					<p>Review <a href="/wiki/06_irrigation_water_budget">Water Budget</a> for sustainable irrigation.</p>
-				</div>
-			</div>
-		</div>
-	</section>
-</div>
+<p>Redirecting to <a href="/en/">/en/</a>…</p>
 
 <style>
 	.home-container {

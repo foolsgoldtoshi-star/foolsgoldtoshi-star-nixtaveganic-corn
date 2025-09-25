@@ -1,26 +1,25 @@
-/* Global CSS with warm theme system inspired by f.lux, Solarized, Daylight Computer */
-
-/* CSS Custom Properties for Dynamic Theming */
 :root {
-  /* Light theme variables (default) */
-  --color-bg: #fefefe;
-  --color-bgSecondary: #f8f9f7;
-  --color-bgTertiary: #f2f4f1;
-  --color-textPrimary: #2c3e2d;
-  --color-textSecondary: #5a6c5b;
-  --color-textMuted: #8b9a8c;
-  --color-primary: #4a7c59;
-  --color-primaryHover: #3d6b4a;
-  --color-secondary: #6ba3a0;
-  --color-accent: #f4a261;
-  --color-success: #52b788;
-  --color-warning: #f4a261;
-  --color-error: #e63946;
-  --color-info: #6ba3a0;
-  --color-border: #e6ebe7;
-  --color-shadow: rgba(44, 62, 45, 0.1);
-  --color-codeBg: #f8f9f7;
-  --color-codeText: #2c3e2d;
+  /* Light (warm) */
+  --bg:#f3f0ea; --fg:#2a2a28; --muted:#6c675f;
+  --accent:#c4662a; --sage:#b7c8b5; --jade:#2a7f6f;
+  --link:#2a7f6f; --card:#fffaf3; --border:#e1dacd;
+}
+:root[data-theme="dark"] {
+  /* Dark (warm) */
+  --bg:#1c1a19; --fg:#f0e9dd; --muted:#b6ac9f;
+  --accent:#e08a3d; --sage:#a8b7a5; --jade:#4fb49f;
+  --link:#4fb49f; --card:#262220; --border:#3a3430;
+}
+html,body{background:var(--bg);color:var(--fg);margin:0;padding:0;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+.header{position:sticky;top:0;display:flex;gap:.75rem;align-items:center;justify-content:space-between;
+  padding:.75rem 1rem;background:var(--card);border-bottom:1px solid var(--border)}
+.lang-badge{font-size:.85rem;padding:.2rem .5rem;border:1px solid var(--border);border-radius:999px}
+.theme-toggle{display:inline-flex;gap:.5rem;align-items:center;border:1px solid var(--border);
+  border-radius:999px;padding:.25rem .6rem;cursor:pointer;background:transparent}
+.container{max-width:980px;margin:0 auto;padding:1.25rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
   
   /* Typography inspired by Daylight Computer */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;

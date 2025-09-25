@@ -1,0 +1,10 @@
+{
+  "name": "star-nixtaveganic-dsl",
+  "private": true,
+  "scripts": {
+    "gen:svelte": "shadow-cljs run node-script"
+  },
+  "devDependencies": {
+    "shadow-cljs": "^2.28.14"
+  }
+}
