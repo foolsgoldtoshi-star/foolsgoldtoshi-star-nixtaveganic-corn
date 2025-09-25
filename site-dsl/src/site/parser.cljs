@@ -50,36 +50,68 @@
 (defn md->ast 
   "Parse markdown string to AST (pure function)"
   [markdown-str]
-  (->> (str/split markdown-str #"\n\n+")
-       (map str/trim)
-       (remove empty?)
-       (map (fn [block]
-              (cond
-                (str/starts-with? block "# ")
-                [:h1 (subs block 2)]
-                
-                (str/starts-with? block "## ")
-                [:h2 (subs block 3)]
-                
-                (str/starts-with? block "### ")
-                [:h3 (subs block 4)]
-                
-                (str/starts-with? block "- ")
-                [:ul (map (fn [line] [:li (subs line 2)])
-                         (str/split-lines block))]
-                
-                (str/starts-with? block "```")
-                (let [lines (str/split-lines block)
-                      lang (subs (first lines) 3)
-                      content (str/join "\n" (drop 1 (drop-last lines)))]
-                  [:code-block {:lang lang} content])
-                
-                (str/starts-with? block "> ")
-                [:blockquote (str/replace block #"^> " "")]
-                
-                :else
-                [:p block])))
-       (vec)))
+  (let [lines (str/split-lines markdown-str)
+        blocks (loop [acc []
+                      current-block []
+                      in-code-block false
+                      code-lang nil
+                      remaining-lines lines]
+                 (if (empty? remaining-lines)
+                   (if (seq current-block)
+                     (conj acc (str/join "\n" current-block))
+                     acc)
+                   (let [line (first remaining-lines)
+                         trimmed (str/trim line)]
+                     (cond
+                       ;; Start of code block
+                       (str/starts-with? trimmed "```")
+                       (if in-code-block
+                         ;; End of code block
+                         (let [code-content (str/join "\n" current-block)
+                               block [:code-block {:lang code-lang} code-content]]
+                           (recur (conj acc block) [] false nil (rest remaining-lines)))
+                         ;; Start of code block
+                         (let [lang (subs trimmed 3)]
+                           (recur acc [] true lang (rest remaining-lines))))
+                       
+                       ;; Inside code block
+                       in-code-block
+                       (recur acc (conj current-block line) true code-lang (rest remaining-lines))
+                       
+                       ;; Empty line - end current block
+                       (empty? trimmed)
+                       (if (seq current-block)
+                         (recur (conj acc (str/join "\n" current-block)) [] false nil (rest remaining-lines))
+                         (recur acc [] false nil (rest remaining-lines)))
+                       
+                       ;; Regular line - add to current block
+                       :else
+                       (recur acc (conj current-block line) false nil (rest remaining-lines))))))
+    
+    (->> blocks
+         (map str/trim)
+         (remove empty?)
+         (map (fn [block]
+                (cond
+                  (str/starts-with? block "# ")
+                  [:h1 (subs block 2)]
+                  
+                  (str/starts-with? block "## ")
+                  [:h2 (subs block 3)]
+                  
+                  (str/starts-with? block "### ")
+                  [:h3 (subs block 4)]
+                  
+                  (str/starts-with? block "- ")
+                  [:ul (map (fn [line] [:li (subs line 2)])
+                           (str/split-lines block))]
+                  
+                  (str/starts-with? block "> ")
+                  [:blockquote (str/replace block #"^> " "")]
+                  
+                  :else
+                  [:p block])))
+         (vec)))
 
 ;; ============================================================================
 ;; File System Operations

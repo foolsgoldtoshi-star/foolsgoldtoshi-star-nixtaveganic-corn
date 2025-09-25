@@ -36,7 +36,7 @@
 
 (defmethod render-ast :code-block [[_ {:keys [lang]} content]]
   (str "<pre><code class=\"language-" lang "\">" 
-       (str/escape content {"<" "&lt;" ">" "&gt;" "&" "&amp;"})
+       (str/escape content {"<" "&lt;" ">" "&gt;" "&" "&amp;" "{" "&#123;" "}" "&#125;"})
        "</code></pre>\n"))
 
 (defmethod render-ast :blockquote [[_ content]]

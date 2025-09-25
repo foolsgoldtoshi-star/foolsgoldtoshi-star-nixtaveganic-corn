@@ -44,6 +44,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/" | "/en" | "/en/" | "/en/wiki" | "/en/wiki/" | `/en/wiki/${string}` & {} | `/en/wiki/${string}/` & {} | "/wiki" | "/wiki/" | `/wiki/${string}` & {} | `/wiki/${string}/` & {} | `/${string}` & {} | `/${string}/` & {};
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/CNAME" | "/content/sitemap.json" | "/sitemap.json" | string & {};
+		Asset(): "/.nojekyll" | "/BUILD_STATUS.json" | "/CNAME" | "/content/sitemap.json" | "/search-index.json" | "/sitemap.json" | string & {};
 	}
 }
