@@ -1,0 +1,57 @@
+# Build artifacts
+/target/
+/.shadow-cljs/
+/web/dist/
+/web/build/
+/web/src/lib/generated/
+/web/static/content/
+/web/node_modules/
+/site-dsl/target/
+/site-dsl/node_modules/
+
+# Development
+/.nrepl-port
+/.clj-kondo/.cache/
+/pom.xml
+*.jar
+*.class
+
+# Nix
+/result
+/result-*
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDE
+/.vscode/
+/.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+/logs/
+
+# Temporary files
+/tmp/
+*.tmp
+*.temp
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Runtime data
+/data/weather_readings/
+/data/sensor_logs/
+/maps/exports/*.pdf
+/maps/exports/*.png
+
+# Personal notes (keep farm data private)
+/notes/
+/private/
+/field_logs_personal/
