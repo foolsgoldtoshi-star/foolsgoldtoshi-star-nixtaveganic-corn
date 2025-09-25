@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import sitemap from '/content/sitemap.json';
+	import sitemap from '$lib/generated/sitemap.js';
 	
 	export let data;
 	

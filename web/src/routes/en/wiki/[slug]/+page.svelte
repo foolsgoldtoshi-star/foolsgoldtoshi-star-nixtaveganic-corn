@@ -1,6 +1,6 @@
 <script>
   import * as pages from '$lib/generated';
-  import sitemap from '/sitemap.json';
+  import sitemap from '$lib/generated/sitemap.js';
   export let params;
   let Comp; $: Comp=pages[params.slug]?.default;
 </script>

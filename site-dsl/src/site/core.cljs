@@ -86,11 +86,12 @@
     (doseq [page pages]
       (gen-page page))
     
-    ;; Write sitemap JSON (SvelteKit expects it in static root)
+    ;; Write sitemap as JS module for SvelteKit imports
+    (spit* "../web/src/lib/generated/sitemap.js" 
+           (str "// Auto-generated sitemap\n"
+                "export default " (.stringify js/JSON (clj->js sitemap) nil 2) ";\n"))
+    ;; Also keep JSON copy for external use
     (spit* "../web/static/sitemap.json" 
-           (.stringify js/JSON (clj->js sitemap) nil 2))
-    ;; Also keep a copy in content directory
-    (spit* "../web/static/content/sitemap.json" 
            (.stringify js/JSON (clj->js sitemap) nil 2))
     
     ;; Generate component index file (fix JS identifier names)

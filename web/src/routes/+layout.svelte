@@ -1,12 +1,11 @@
 <script>
 	import '../app.css';
-	import Nav from '$lib/generated/Nav.svelte';
-	import Footer from '$lib/generated/Footer.svelte';
+	import Nav from '$lib/components/Nav.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import LanguageToggle from '$lib/components/LanguageToggle.svelte';
 	import { theme } from '$lib/stores/theme.js';
 	import { currentLanguage, t } from '$lib/stores/i18n.js';
-	import sitemap from '/sitemap.json';
+	import sitemap from '$lib/generated/sitemap.js';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	
@@ -56,7 +55,11 @@
 		<slot />
 	</main>
 	
-	<Footer {sitemap} />
+	<footer class="main-footer">
+		<div class="footer-content">
+			<p>🎊 Built with functional programming by foolsgoldtoshi-star 🖤🤎💙</p>
+		</div>
+	</footer>
 </div>
 
 <style>
