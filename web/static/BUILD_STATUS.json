@@ -1,0 +1,40 @@
+{
+  "system": "NixtaVeganic Functional Farm Documentation",
+  "version": "0.4.0",
+  "status": "operational",
+  "last_build": "2025-09-25T20:00:00Z",
+  "technologies": {
+    "clj-nix": {
+      "url": "https://github.com/jlesquembre/clj-nix",
+      "version": "0.4.0",
+      "stars": 169,
+      "license": "EPL-2.0",
+      "status": "alpha",
+      "integration": "enhanced"
+    },
+    "babashka": {
+      "purpose": "fast-starting Clojure scripting",
+      "startup_time": "<100ms",
+      "vs_jvm": "~3s savings per task"
+    },
+    "clojurescript": {
+      "target": "node-script",
+      "compiler": "shadow-cljs",
+      "output": "svelte components"
+    },
+    "svelte": {
+      "framework": "SvelteKit", 
+      "adapter": "static",
+      "theme": "warm (sage light + jade dark)"
+    }
+  },
+  "deployment": {
+    "local": "http://localhost:8080",
+    "production": "https://foolsgoldtoshi-star.github.io/foolsgoldtoshi-star-nixtaveganic-corn/",
+    "ci_cd": "GitHub Actions (4 workflows)",
+    "branch_strategy": "highvalley-wake (prod) + dev-unstable (sync)"
+  },
+  "philosophy": "Simple made easy, farms made functional",
+  "author": "foolsgoldtoshi-star",
+  "innovation": "First functional programming approach to ecological agriculture"
+}

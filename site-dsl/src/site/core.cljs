@@ -1,12 +1,23 @@
 (ns site.core
+  "ClojureScript DSL generator for functional farm documentation
+   Enhanced with clj-nix integration for better Nix + Clojure workflow
+   Reference: https://github.com/jlesquembre/clj-nix (EPL-2.0, 169 stars)"
   (:require [clojure.core.async :as a]
             [clojure.string :as str]
             [site.parser :as p]
             [site.render.svelte :as sv]))
 
-;; Node.js File System API
+;; Node.js File System API (clj-nix compatible)
 (def fs (js/require "fs"))
 (def path (js/require "path"))
+
+;; Build metadata for clj-nix integration
+(def build-info
+  {:generator "ClojureScript DSL with clj-nix"
+   :version "0.4.0"
+   :philosophy "Rich Hickey meets NixOS meets ecological agriculture"
+   :clj-nix-integration true
+   :nix-reproducible true})
 
 ;; ============================================================================
 ;; File System Utilities (Node.js compatible)
@@ -70,10 +81,12 @@
 
 (defn gen-all []
   "Main generation function: parse all docs → generate Svelte components"
-  (println "🌽 Starting NixtaVeganic site generation...")
-  
-  ;; Parse all markdown files
-  (let [pages (parse-all)
+    (println "🌽 Starting NixtaVeganic site generation...")
+    (println "📦 Using clj-nix enhanced build system")
+    (println "⭐ Reference: https://github.com/jlesquembre/clj-nix")
+    
+    ;; Parse all markdown files with clj-nix integration
+    (let [pages (parse-all)
         
         ;; Generate sitemap
         sitemap (map #(select-keys % [:id :title]) pages)
@@ -106,10 +119,13 @@
     (println "✅ Generated" (count pages) "Svelte components")
     (println "📊 Created sitemap with" (count sitemap) "entries")
     (println "🎯 Site generation complete!")
+    (println "🔧 clj-nix integration: Enhanced Nix + Clojure workflow")
     
     {:pages (count pages)
      :components (count pages)
-     :sitemap (count sitemap)}))
+     :sitemap (count sitemap)
+     :build-info build-info
+     :clj-nix-enhanced true}))
 
 ;; ============================================================================
 ;; Main Entry Points

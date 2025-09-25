@@ -3,8 +3,10 @@
  {:requires ([babashka.fs :as fs]
              [babashka.process :refer [shell]]
              [clojure.string :as str])
-  :init (defn sh [& args]
-          (apply shell {:dir "." :out :inherit :err :inherit} args))
+  :init (do (defn sh [& args]
+              (apply shell {:dir "." :out :inherit :err :inherit} args))
+            (defn msg [emoji & parts] 
+              (println emoji (str/join " " parts))))
 
   build:gen {:task (do
                      (shell {:dir "site-dsl"} "npm" "ci")
@@ -35,6 +37,40 @@
   clean {:task (do (fs/delete-tree "web/build" {:force true})
                    (println "cleaned web/build"))}
 
+  clean:deep {:task (do (fs/delete-tree "web/build" {:force true})
+                        (fs/delete-tree "web/node_modules" {:force true})
+                        (fs/delete-tree "site-dsl/node_modules" {:force true})
+                        (fs/delete-tree "site-dsl/.shadow-cljs" {:force true})
+                        (fs/delete-tree "target" {:force true})
+                        (fs/delete-tree ".shadow-cljs" {:force true})
+                        (println "🎊 Deep clean complete - CI disk pressure relief! 🖤"))}
+
+  ;; Enhanced pipeline tasks
   build:all {:depends [build:site lint:kondo fmt:check]}
-  serve {:task (do (load-file "scripts/serve.clj") 
-                   ((resolve 'serve/start-server)))}}}
+  
+  ;; Development and deployment tasks
+  dev {:doc "Development mode with live reload"
+       :task (do (msg "🎊" "Starting development mode...")
+                 (future (shell {:dir "."} "bb" "build:gen"))
+                 (Thread/sleep 2000)
+                 (msg "🖤" "Live reload enabled - edit docs/ for updates"))}
+  
+  status {:doc "Show system status and health"
+          :task (do (msg "🎊" "NixtaVeganic Functional Farm System Status")
+                    (println "📁 Repository:" (System/getProperty "user.dir"))
+                    (println "🔧 Babashka:" (System/getProperty "babashka.version"))
+                    (println "📄 Documentation files:" (count (fs/glob "docs" "*.md")))
+                    (println "🎨 Generated components:" (count (fs/glob "web/src/lib/generated" "*.svelte")))
+                    (println "🌐 Local server: http://localhost:8080")
+                    (println "🖤🤎💙 Philosophy: Simple made easy, farms made functional"))}
+  
+  serve {:doc "Start Babashka HTTP server for local development"
+         :task (do (when-not (fs/exists? "web/dist/index.html")
+                     (msg "⚠️" "No built site found - run 'bb build:all' first"))
+                   (msg "🎊" "Starting Babashka HTTP server...")
+                   (load-file "scripts/serve.clj")
+                   ((resolve 'serve/start-server)))}
+  
+  health {:doc "Run comprehensive system health checks"
+          :task (do (load-file "scripts/health-check.clj")
+                    ((resolve 'health-check/run-health-checks)))}}}}
