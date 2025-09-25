@@ -1,0 +1,18 @@
+{:width 80
+ :style [:respect-nl :community]
+ :map {:comma? false
+       :hang? true
+       :force-nl? false
+       :respect-nl? true}
+ :vector {:wrap? true
+          :respect-nl? true}
+ :set {:wrap? true}
+ :pair {:hang? true
+        :force-nl? false}
+ :list {:wrap? true
+        :respect-nl? true}
+ :reader-cond {:style :respect-nl}
+ :comment {:wrap? true}
+ :binding {:force-nl? false}
+ :parse-string? true
+ :zipper? true}
