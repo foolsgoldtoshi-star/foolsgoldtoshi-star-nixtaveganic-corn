@@ -1,0 +1,186 @@
+name: 🌽 NixtaVeganic CI/CD Pipeline
+
+on:
+  push:
+    branches: [ highvalley-wake, dev-unstable ]
+  pull_request:
+    branches: [ highvalley-wake ]
+
+env:
+  NODE_VERSION: '20'
+  CLOJURE_VERSION: '1.11.1'
+
+jobs:
+  # Lint and validate all code and configuration
+  lint-and-validate:
+    runs-on: ubuntu-latest
+    name: 🔍 Lint & Validate
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: ❄️ Setup Nix
+      uses: cachix/install-nix-action@v23
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🔧 Setup development environment
+      run: nix develop --command echo "Development environment ready"
+      
+    - name: 🧪 Validate EDN configuration files
+      run: nix develop --command bb lint
+      
+    - name: 📐 Check code formatting
+      run: nix develop --command bb fmt:check
+      
+    - name: 🔍 Lint ClojureScript with clj-kondo
+      run: nix develop --command bb lint:kondo
+
+  # Build the complete website
+  build:
+    runs-on: ubuntu-latest
+    name: 📦 Build Site
+    needs: lint-and-validate
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: ❄️ Setup Nix
+      uses: cachix/install-nix-action@v23
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 📦 Build complete site
+      run: nix develop --command bb build:all
+      
+    - name: 📊 Verify build artifacts
+      run: |
+        ls -la web/dist/
+        echo "Build size: $(du -sh web/dist/ | cut -f1)"
+        
+    - name: 💾 Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: nixtaveganic-website
+        path: web/dist/
+        retention-days: 30
+
+  # Run comprehensive test suite
+  test:
+    runs-on: ubuntu-latest  
+    name: 🧪 Test Suite
+    needs: lint-and-validate
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: ❄️ Setup Nix
+      uses: cachix/install-nix-action@v23
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🧪 Run Clojure.spec tests
+      run: nix develop --command bb test
+      
+    - name: 📋 Generate test report
+      run: |
+        echo "Test Results:" > test-results.txt
+        echo "$(date): All tests passed" >> test-results.txt
+        
+    - name: 💾 Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: test-results.txt
+
+  # Deploy to GitHub Pages (only on main branch)
+  deploy:
+    runs-on: ubuntu-latest
+    name: 🚀 Deploy GitHub Pages
+    needs: [build, test]
+    if: github.ref == 'refs/heads/highvalley-wake'
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: ❄️ Setup Nix
+      uses: cachix/install-nix-action@v23
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 📦 Build site for GitHub Pages
+      run: |
+        nix develop --command bb build:all
+        # Ensure proper base path for GitHub Pages
+        echo "Built for: https://foolsgoldtoshi-star.github.io/foolsgoldtoshi-star-nixtaveganic-corn/"
+        
+    - name: ⚙️ Setup GitHub Pages
+      uses: actions/configure-pages@v3
+      
+    - name: 📤 Upload to GitHub Pages
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: web/dist/
+        
+    - name: 🌐 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+
+  # Sync dev-unstable branch with highvalley-wake
+  sync-branches:
+    runs-on: ubuntu-latest
+    name: 🔄 Sync dev-unstable
+    if: github.ref == 'refs/heads/highvalley-wake' && github.event_name == 'push'
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🔄 Sync dev-unstable with highvalley-wake
+      run: |
+        git config --global user.name "foolsgoldtoshi-star"
+        git config --global user.email "foolsgoldtoshi@gmail.com"
+        
+        # Switch to dev-unstable (create if doesn't exist)
+        git checkout dev-unstable 2>/dev/null || git checkout -b dev-unstable
+        
+        # Merge changes from highvalley-wake
+        git merge origin/highvalley-wake --strategy-option=theirs -m "🔄 Auto-sync from highvalley-wake"
+        
+        # Push updated dev-unstable
+        git push origin dev-unstable
+        
+        echo "✅ dev-unstable synced with highvalley-wake"
+
+  # Notification on completion
+  notify:
+    runs-on: ubuntu-latest
+    name: 📢 Notify Completion
+    needs: [deploy, sync-branches]
+    if: always()
+    
+    steps:
+    - name: 🎯 CI/CD Status
+      run: |
+        echo "🌽 NixtaVeganic CI/CD Pipeline Complete!"
+        echo "📊 Build: ${{ needs.build.result }}"
+        echo "🧪 Tests: ${{ needs.test.result }}"
+        echo "🚀 Deploy: ${{ needs.deploy.result }}"
+        echo "🔄 Sync: ${{ needs.sync-branches.result }}"
+        echo "🌐 Site: https://foolsgoldtoshi-star.github.io/foolsgoldtoshi-star-nixtaveganic-corn/"

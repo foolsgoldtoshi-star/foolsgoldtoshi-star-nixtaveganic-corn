@@ -108,3 +108,4 @@
 - **Annual Review**: Yield trends, input costs, system improvements
 - **Patch Comparison**: Identify best-performing areas and practices
 - **Climate Adaptation**: Adjust varieties and timing based on weather patterns
+

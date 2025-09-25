@@ -168,3 +168,4 @@
   
   ;; Watch for changes
   (watch-and-rebuild #(parse-all-markdown)))
+

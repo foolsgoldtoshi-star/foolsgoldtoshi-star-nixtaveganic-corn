@@ -35,3 +35,4 @@ We treat the farm as both an **ecosystem** and a **codebase**: versioned, observ
 - **Corn Agronomy**: [04_agronomy_corn.md](04_agronomy_corn.md)
 - **Water Systems**: [06_irrigation_water_budget.md](06_irrigation_water_budget.md)
 - **Processing**: [10_nixtamal_processing.md](10_nixtamal_processing.md)
+

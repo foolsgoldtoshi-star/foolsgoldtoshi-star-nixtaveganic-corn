@@ -45,5 +45,33 @@
   ;; ----- full pipeline -----
   build:all {:depends [build:site lint:kondo fmt:write]}
 
+  ;; ----- github pages deployment -----
+  pages:build {:doc "Build for GitHub Pages deployment"
+               :task (do (println "🌐 Building for GitHub Pages...")
+                         (sh "bb" "build:site")
+                         (sh "npx" "vite" "build" "--base=/foolsgoldtoshi-star-nixtaveganic-corn/" :dir "web")
+                         (println "✅ GitHub Pages build complete"))}
+
+  pages:preview {:doc "Preview GitHub Pages build locally"
+                 :depends [pages:build]
+                 :task (do (println "🔍 Previewing GitHub Pages build...")
+                           (sh "npx" "vite" "preview" "--port" "8080" :dir "web"))}
+
+  ;; ----- branch management -----
+  branch:sync {:doc "Sync dev-unstable with highvalley-wake"
+               :task (do (println "🔄 Syncing branches...")
+                         (sh "git" "checkout" "dev-unstable")
+                         (sh "git" "merge" "highvalley-wake")
+                         (sh "git" "push" "origin" "dev-unstable")
+                         (sh "git" "checkout" "highvalley-wake")
+                         (println "✅ Branch sync complete"))}
+
+  branch:create {:doc "Create dev-unstable branch if it doesn't exist"
+                 :task (do (println "🌿 Creating dev-unstable branch...")
+                           (sh "git" "checkout" "-b" "dev-unstable")
+                           (sh "git" "push" "-u" "origin" "dev-unstable")
+                           (sh "git" "checkout" "highvalley-wake")
+                           (println "✅ dev-unstable branch created"))}
+
   ;; ----- serve -----
   serve {:task (do (sh "bb" "scripts/serve.clj"))}}}

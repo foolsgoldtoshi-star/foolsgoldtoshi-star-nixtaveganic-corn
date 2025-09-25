@@ -12,12 +12,25 @@ const config = {
 		}),
 		prerender: {
 			handleHttpError: 'warn',
-			handleMissingId: 'warn'
+			handleMissingId: 'warn',
+			entries: [
+				'/',
+				'/en',
+				'/en/wiki/00_overview',
+				'/en/wiki/01_context_climate',
+				'/en/wiki/04_agronomy_corn'
+			]
 		},
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '' : ''
+			base: process.env.NODE_ENV === 'production' 
+				? '/foolsgoldtoshi-star-nixtaveganic-corn'  // GitHub Pages path
+				: ''
+		},
+		alias: {
+			$content: 'static/content'
 		}
 	}
 };
 
 export default config;
+

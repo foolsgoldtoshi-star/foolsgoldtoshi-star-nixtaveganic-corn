@@ -42,3 +42,4 @@
 - **On-Site Station**: NOAA-compatible automated station for real-time data
 - **Integration**: ET calculation, frost alerts, irrigation triggers
 - **Data Retention**: 10+ years for climate trend analysis
+
