@@ -1,13 +1,25 @@
-# Build artifacts
+# Build artifacts and generated files
 /target/
 /.shadow-cljs/
-/web/dist/
 /web/build/
+/web/dist/
+/web/.svelte-kit/
 /web/src/lib/generated/
-/web/static/content/
-/web/node_modules/
+/web/static/sitemap.json
 /site-dsl/target/
+/site-dsl/out/
+/site-dsl/.shadow-cljs/
+
+# Node.js dependencies
+/web/node_modules/
 /site-dsl/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Package manager files (keep lock files for reproducibility)
+# /web/package-lock.json
+# /site-dsl/package-lock.json
 
 # Development
 /.nrepl-port
@@ -16,43 +28,89 @@
 *.jar
 *.class
 
-# Nix
+# Nix build results
 /result
 /result-*
+/.direnv/
 
 # OS specific
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# IDE
+# IDE and editor files
 /.vscode/
 /.idea/
 *.swp
 *.swo
 *~
+.vim/
+.emacs.d/
 
-# Logs
+# Logs and temporary files
 *.log
 /logs/
-
-# Temporary files
 /tmp/
 *.tmp
 *.temp
+/web/vite.config.js.timestamp-*
 
-# Environment
+# Environment and secrets
 .env
 .env.local
 .env.*.local
+.env.development
+.env.production
 
-# Runtime data
+# Runtime data and caches
 /data/weather_readings/
 /data/sensor_logs/
 /maps/exports/*.pdf
 /maps/exports/*.png
+/.cache/
 
-# Personal notes (keep farm data private)
+# Personal and private content
 /notes/
 /private/
 /field_logs_personal/
+/backup/
 
+# Clojure specific
+/.lein-*
+/.boot
+/classes/
+/lib/
+/checkouts/
+
+# SvelteKit specific
+/.svelte-kit/
+/package/
+
+# Vite specific
+node_modules
+dist
+dist-ssr
+*.local
+
+# Testing artifacts
+/coverage/
+/.nyc_output/
+
+# Documentation build artifacts (keep source docs)
+# /docs/ - keep this, it's our source content
+
+# ClojureScript compilation artifacts
+/out/
+/resources/public/js/
+/resources/public/css/
+
+# Shadow-CLJS specific
+.shadow-cljs/
+shadow-cljs.edn.orig
+
+# Babashka specific
+.bb-pod-cache/
