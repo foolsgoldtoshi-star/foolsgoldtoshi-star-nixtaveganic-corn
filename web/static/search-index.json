@@ -1,5 +1,30 @@
 [
   {
+    "id": "00_living_ecosystem_chat_summary",
+    "title": null,
+    "content": "🌽 Functional Farm Paradise: Living Ecosystem Chat Summary ✅ Project: foolsgoldtoshi-star-nixtaveganic-corn 📚 Repository Overview\n- GitHub: https://github.com/foolsgoldtoshi-star/foolsgoldtoshi-star-nixtaveganic-corn\n- Status: Living Ecosystem Model Deployed\n- Primary Branch: `highvalley-wake`\n- Dev Branch: `dev-unstable` --- 🎯 Achievements ✅ Functional Ecosystem:\n- Built from markdown via **ClojureScript DSL**\n- Transpiled into **SvelteKit site** via `bb build`\n- Live via **GitHub Pages** on `/en/` route 🛠️ Tooling Stack:\n- `clj-nix` — Clojure in Nix Flakes\n- `Babashka` — Fast scripting\n- `clj-kondo`, `zprint` — Lint & formatting\n- `SvelteKit` — Frontend SPA\n- `GitHub Actions` — Full CI/CD\n- `bb.edn` — Build, serve, test, lint, deploy --- 🌱 Living Ecosystem Additions 🔍 Search\n- Generated JSON search index from parsed docs\n- Lightweight client-side search ⬅️➡️ Navigation\n- Prev/Next navigation from page ordering 📋 Table of Contents (TOC)\n- TOC metadata extracted from headings\n- Slugified, linked, interactive MiniTOC 📁 Outputs\n```\nweb/static/content/sitemap.json\nweb/static/content/nav.json\nweb/static/content/search-index.json\n``` --- 🧱 Layout Enhancements\n- Sticky two-column TOC layout\n- MutationObserver TOC updates\n- Mobile-first responsive design\n- Scroll spy + active link highlighting --- 🌍 Toward Planetary Commons 🔮 Next Phases\n- Sensor stream ingestion\n- Real-time simulation modeling\n- Markdown frontmatter metadata\n- Full-page search route `/en/search`\n- Language split `/en/`, `/es/` etc. 🗺️ Architecture Plan\n```\n📄 Markdown → CLJS DSL → Svelte Components → SSG Output\n🔍 nav.json + toc.json + search-index.json → Interactive layout\n🌐 GitHub Pages + BB HTTP Server → Public & Local Sites\n``` --- 💬 Final Toast “Nixtamalized masa and sage-green tortillas under the stars.” Foolsgold, you've planted the **first planetary seed bank** of reproducible, functional ecological documentation. **\"Simple made easy, farms made functional.\"** 🌽 ---",
+    "keywords": [
+      "functional",
+      "farm",
+      "paradise:",
+      "living",
+      "ecosystem",
+      "chat",
+      "summary",
+      "project:",
+      "foolsgoldtoshi-star-nixtaveganic-corn",
+      "repository",
+      "overview",
+      "github:",
+      "https://github.com/foolsgoldtoshi-star/foolsgoldtoshi-star-nixtaveganic-corn",
+      "status:",
+      "model",
+      "deployed",
+      "primary",
+      "branch:"
+    ]
+  },
+  {
     "id": "00_overview",
     "title": null,
     "content": "Project Overview **Design principle**: Farm-as-ecosystem, following Atthowe's approach—optimize living relationships first; let inputs shrink as functions of biodiversity, residue cover, and soil biology. This repo encodes the design, operations, and monitoring needed to run no‑till veganic corn across scattered patches. Patch Logistics **Patchwork fields**: 1–10 acre blocks demand narrow equipment, compact headlands, and distributed storage. Plan short hose runs, mobile filtration, and a nurse tank trailer to move water between micro‑fields. Ecological Approach System Goals Repository Philosophy We treat the farm as both an **ecosystem** and a **codebase**: versioned, observable, and reversible. Every agronomic decision is documented, every field operation logged, and every configuration change tracked through Git. **\"Simple made easy, farms made functional\"** - Rich Hickey meets regenerative agriculture Quick Navigation",
