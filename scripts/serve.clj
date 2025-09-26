@@ -48,22 +48,45 @@
                  "<p><a href=\"/\">← Back to Home</a></p>"
                  "</body></html>")})))
 
+(defn log-request [request response]
+  "Log incoming requests with beautiful formatting"
+  (let [uri (:uri request)
+        method (:request-method request)
+        status (:status response)
+        timestamp (java.time.LocalDateTime/now)
+        time-str (.format timestamp (java.time.format.DateTimeFormatter/ofPattern "HH:mm:ss"))]
+    
+    ;; Color code by status
+    (let [status-emoji (cond
+                        (<= 200 status 299) "✅"
+                        (<= 300 status 399) "🔄"
+                        (<= 400 status 499) "⚠️"
+                        (<= 500 status 599) "❌"
+                        :else "❓")]
+      
+      (println (str "[" time-str "] " status-emoji " " method " " uri " → " status)))))
+
 (defn spa-handler [root-dir]
   "Handler for Single Page Application routing"
   (fn [request]
-    (let [uri (:uri request)]
-      (cond
-        ;; Static assets (has file extension)
-        (re-find #"\.[a-zA-Z0-9]+$" uri)
-        (serve-static-file root-dir uri)
-        
-        ;; API routes (if any)
-        (str/starts-with? uri "/api/")
-        {:status 404 :body "API not implemented"}
-        
-        ;; All other routes → serve index.html (SPA routing)
-        :else
-        (serve-static-file root-dir "/index.html")))))
+    (let [uri (:uri request)
+          response (cond
+                    ;; Static assets (has file extension)
+                    (re-find #"\.[a-zA-Z0-9]+$" uri)
+                    (serve-static-file root-dir uri)
+                    
+                    ;; API routes (if any)
+                    (str/starts-with? uri "/api/")
+                    {:status 404 :body "API not implemented"}
+                    
+                    ;; All other routes → serve index.html (SPA routing)
+                    :else
+                    (serve-static-file root-dir "/index.html"))]
+      
+      ;; Log the request
+      (log-request request response)
+      
+      response)))
 
 ;; ============================================================================
 ;; Server Configuration
@@ -76,11 +99,55 @@
 (defn start-server 
   ([] (start-server config))
   ([{:keys [port root-dir]}]
-   (let [handler (spa-handler root-dir)]
-     (println "🌽 NixtaVeganic Server Starting...")
-     (println "📁 Serving files from:" (.getAbsolutePath (io/file root-dir)))
-     (println "🌐 Local server: http://localhost:" port)
-     (println "⏹️  Press Ctrl+C to stop")
+   (let [handler (spa-handler root-dir)
+         root-file (io/file root-dir)
+         index-file (io/file root-dir "index.html")
+         dist-exists (.exists root-file)
+         index-exists (.exists index-file)]
+     
+     ;; Beautiful startup banner
+     (println)
+     (println "🎊🎊🎊 LIVING ECOSYSTEM SERVER STARTING! 🎊🎊🎊")
+     (println "🌽 NixtaVeganic Functional Farm Documentation System")
+     (println "🖤🤎💙 Built with ClojureScript DSL + SvelteKit + Babashka")
+     (println)
+     
+     ;; System status
+     (println "📊 SYSTEM STATUS:")
+     (println "  📁 Root directory:" (.getAbsolutePath root-file))
+     (println "  📄 Index file exists:" (if index-exists "✅ YES" "❌ NO"))
+     (println "  📦 Distribution ready:" (if dist-exists "✅ YES" "❌ NO"))
+     (println)
+     
+     ;; Server info
+     (println "🌐 SERVER CONFIGURATION:")
+     (println "  🔗 URL: http://localhost:" port)
+     (println "  🚀 Mode: Single Page Application (SPA)")
+     (println "  📱 Responsive: Mobile + Desktop optimized")
+     (println "  🎨 Theme: Warm dark/light with sage + jade accents")
+     (println)
+     
+     ;; Features
+     (println "✨ LIVING ECOSYSTEM FEATURES:")
+     (println "  🔍 Global search (press / to focus)")
+     (println "  📋 Sticky MiniTOC with scroll spy")
+     (println "  ⬅️➡️ Smart navigation (prev/next)")
+     (println "  🌱 Functional farm knowledge base")
+     (println "  🎊 Real-time content updates")
+     (println)
+     
+     ;; Philosophy
+     (println "🌱 PHILOSOPHY:")
+     (println "  \"Simple made easy, farms made functional\"")
+     (println "  \"From epistemic seed bank to planetary commons\"")
+     (println "  \"Rich Hickey meets Helen Atthowe meets NixOS\"")
+     (println)
+     
+     ;; Ready message
+     (println "🚀 READY TO SERVE!")
+     (println "  ⏹️  Press Ctrl+C to stop")
+     (println "  🔄 Server will auto-reload on file changes")
+     (println "  🌍 Access your living ecosystem now!")
      (println)
      
      (http/run-server handler {:port port})

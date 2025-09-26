@@ -39,8 +39,15 @@
        (str/escape content {"<" "&lt;" ">" "&gt;" "&" "&amp;" "{" "&#123;" "}" "&#125;"})
        "</code></pre>\n"))
 
+(defmethod render-ast :p [[_ content]]
+  (str "<p>" 
+       (str/escape content {"<" "&lt;" ">" "&gt;" "&" "&amp;" "{" "&#123;" "}" "&#125;"})
+       "</p>\n"))
+
 (defmethod render-ast :blockquote [[_ content]]
-  (str "<blockquote>" content "</blockquote>\n"))
+  (str "<blockquote>" 
+       (str/escape content {"<" "&lt;" ">" "&gt;" "&" "&amp;" "{" "&#123;" "}" "&#125;"})
+       "</blockquote>\n"))
 
 (defmethod render-ast :default [node]
   (if (string? node)

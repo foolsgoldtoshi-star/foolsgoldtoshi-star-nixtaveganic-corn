@@ -58,9 +58,9 @@
           class:active={activeHeading?.anchor === heading.anchor}
           on:click|preventDefault={() => scrollToHeading(heading)}
         >
-          <span class="toc-level" class:level-{heading.level}>
-            {heading.level === :h1 ? '#' : heading.level === :h2 ? '##' : '###'}
-          </span>
+            <span class="toc-level" class:level-h1={heading.level === 'h1'} class:level-h2={heading.level === 'h2'} class:level-h3={heading.level === 'h3'}>
+              {heading.level === 'h1' ? '#' : heading.level === 'h2' ? '##' : '###'}
+            </span>
           <span class="toc-text">{heading.text}</span>
         </a>
       {/each}

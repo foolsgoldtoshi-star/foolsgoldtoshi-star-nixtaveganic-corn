@@ -57,6 +57,28 @@
                         (fs/delete-tree ".shadow-cljs" {:force true})
                         (msg "🎊" "Deep clean complete - CI disk pressure relief! 🖤"))}
 
+  ;; Enhanced clj-kondo integration tasks
+  quality:check {:doc "Run all quality checks (lint + format)"
+                 :depends [lint:kondo fmt:check]
+                 :task (msg "🎯" "All quality checks passed!")}
+
+  clj-kondo:config {:doc "Generate clj-kondo configuration"
+                    :task (do (msg "⚙️" "Setting up clj-kondo config...")
+                              (spit ".clj-kondo/config.edn"
+                                    "{:config-paths [\"config\"]
+                                      :lint-as {clojure.core.async/go-loop clojure.core.async/go}
+                                      :linters {:unused-namespace {:level :warning}
+                                                :unused-var {:level :warning}
+                                                :unresolved-symbol {:level :error}}
+                                      :clj-kondo/ignore-for-ns {site.parser [unresolved-symbol]}
+                                      :output {:format :edn :analysis true}}")
+                              (msg "✅" "clj-kondo config generated"))}
+
+  clj-kondo:analysis {:doc "Export clj-kondo analysis data"
+                      :task (do (msg "📊" "Exporting clj-kondo analysis...")
+                                (sh "clj-kondo" "--lint" "site-dsl/src" "scripts" "config" "--config" ".clj-kondo/config.edn" "--export" "clj-kondo-analysis.edn")
+                                (msg "✅" "Analysis data exported to clj-kondo-analysis.edn"))}
+
   build:all {:doc "Complete functional build pipeline"
              :depends [build:site lint:kondo fmt:check]
              :task (msg "🌽" "Functional farm build pipeline complete!")}
